@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0",
+  "note": "일반적인 상온 스크리닝 프리셋입니다. 실제 설계에는 구매 재료의 밀시트, 공급사 장기강도 자료, 적용 규격의 설계허용응력을 입력해야 합니다.",
+  "materials": [
+    {
+      "id": "sus304",
+      "name": "SUS304",
+      "group": "metal",
+      "densityKgM3": 7930,
+      "elasticModulusMpa": 193000,
+      "referenceStrengthMpa": 205,
+      "creepFactor": 1,
+      "jointEfficiency": 0.85,
+      "standardThicknessesMm": [2, 2.5, 3, 4, 4.5, 5, 6, 8, 10, 12],
+      "sourceQuality": "medium",
+      "note": "0.2% 내력 대표값을 사용한 상온 프리셋입니다. 판재 규격·두께·열처리·온도별 값을 밀시트와 적용 코드에서 다시 확인하세요."
+    },
+    {
+      "id": "sus316l",
+      "name": "SUS316L",
+      "group": "metal",
+      "densityKgM3": 8000,
+      "elasticModulusMpa": 193000,
+      "referenceStrengthMpa": 170,
+      "creepFactor": 1,
+      "jointEfficiency": 0.85,
+      "standardThicknessesMm": [2, 2.5, 3, 4, 4.5, 5, 6, 8, 10, 12],
+      "sourceQuality": "medium",
+      "note": "저탄소 316L의 보수적인 0.2% 내력 대표값입니다. 실제 주문 재질과 설계온도 자료로 교체하세요."
+    },
+    {
+      "id": "pph",
+      "name": "PP-H",
+      "group": "thermoplastic",
+      "densityKgM3": 900,
+      "elasticModulusMpa": 1400,
+      "referenceStrengthMpa": 32,
+      "creepFactor": 0.4,
+      "jointEfficiency": 0.8,
+      "standardThicknessesMm": [6, 8, 10, 12, 15, 20, 25, 30, 35, 40],
+      "sourceQuality": "low",
+      "note": "SIMONA 일반 PP-H 상온 대표값에 내부 장기하중 감소계수를 적용하는 스크리닝 가정입니다. 온도·약품·설계수명별 DVS 2205 또는 공급사 크리프 곡선이 없으면 제작 판정에 사용하지 마세요."
+    },
+    {
+      "id": "custom",
+      "name": "사용자 정의",
+      "group": "custom",
+      "densityKgM3": 1000,
+      "elasticModulusMpa": 1000,
+      "referenceStrengthMpa": 20,
+      "creepFactor": 1,
+      "jointEfficiency": 1,
+      "standardThicknessesMm": [3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 30],
+      "sourceQuality": "user",
+      "note": "PVC, PE, 아크릴 등은 등급·온도·약품별 차이가 커 자동 프리셋을 제공하지 않습니다. 공급사 설계값을 직접 입력하세요."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>계산 근거 · TankStruct</title><link rel="stylesheet" href="./docs.css"></head>
+<body><header><div class="topbar"><a class="brand" href="../">TankStruct</a><nav><a href="./calculation-basis.html">계산 근거</a><a href="./user-guide.html">사용 설명서</a><a href="./limitations.html">한계</a></nav></div><div class="hero"><span class="eyebrow">ENGINEERING BASIS · v0.2.0</span><h1>공식과 가정을 숨기지 않는 계산 근거</h1><p>화면, CSV, PNG, PDF에 동일한 공식·입력값 대입·단위·판정 근거를 기록합니다.</p></div></header>
+<main><aside><strong>이 문서</strong><a href="#scope">범위</a><a href="#hydro">정수압</a><a href="#rect">사각 측판</a><a href="#cylinder">원통</a><a href="#stiffener">보강재</a><a href="#material">허용응력</a></aside>
+<article>
+<section id="scope"><h2>적용 범위</h2><p class="lead">대기와 통하는 상압 액체 저장탱크의 개념·견적 단계에서 후보안을 비교하기 위한 스크리닝 모델입니다.</p><div class="callout"><strong>제작 승인용 구조계산서가 아닙니다.</strong>밀폐·진공·지진·풍하중·운반·교반기·노즐·다리 지지는 통과 판정을 차단하고 전문 구조검토 대상으로 표시합니다.</div></section>
+<section id="hydro"><h2>1. 정수압</h2><div class="formula">ρ = SG × 1,000 kg/m³<br>p(z) = ρgz<br>pmax = ρgh<br>F(벽 1 m) = ρgh² / 2<br>합력 작용점 = 바닥 위 h/3</div><p>액면에서 0, 바닥에서 최대가 되는 삼각 압력분포입니다. 표준중력가속도 9.80665 m/s²를 사용합니다.</p></section>
+<section id="rect"><h2>2. 사각 탱크 측판</h2><p>입력한 수평·수직 보강재가 패널 경계를 지지한다고 보고, 패널의 짧은 변을 지배 스팬으로 하는 1 m 폭 단순지지 스트립으로 단순화합니다.</p><div class="formula">s = min(패널 높이, 패널 폭)<br>te = 공칭두께 − 부식·가공 여유<br>σmax = 0.75ps² / te²<br>δmax = 5ps⁴ / (32Ete³)</div><p>실제 양방향 판작용의 유리한 효과는 사용하지 않습니다. 다만 지지 조건이 불확실하면 이 보수성만으로 안전을 보장할 수 없습니다.</p></section>
+<section id="cylinder"><h2>3. 원통 탱크</h2><div class="formula">σh = pD / (2te)<br>Uσ = σh / σallow</div><p>바닥 최대 수압에서의 얇은막 둘레응력만 산정합니다. 원통 변형, 상부 풍좌굴, 진공좌굴, 앵커와 바닥 접합부는 계산하지 않습니다.</p></section>
+<section id="stiffener"><h2>4. 보강재 요구 단면계수</h2><div class="formula">w = p × 지배폭<br>Mmax = wL² / 8<br>Zreq = Mmax / σallow<br>UZ = Zreq / Zactual</div><p>요구 단면계수만 제시하는 데서 끝나지 않고, 사용자가 입력한 실제 프로파일 단면계수와 비교합니다. 실제 Z가 없으면 통과 판정을 내리지 않습니다.</p></section>
+<section id="material"><h2>5. 허용응력과 판정</h2><div class="formula">σallow = σref × Kcreep × ηjoint × Ktemp / SF<br>Umax = max(Uσ, Uδ, UZ,h, UZ,v)</div><table><thead><tr><th>값</th><th>의미</th><th>출처 책임</th></tr></thead><tbody><tr><td>σref, E</td><td>기준 강도, 탄성계수</td><td>밀시트·공급사·적용 규격으로 사용자 확인</td></tr><tr><td>Kcreep</td><td>장기하중 감소</td><td>수지의 수명·온도·약품 조건 자료</td></tr><tr><td>ηjoint</td><td>이음 효율</td><td>용접법·검사 수준·적용 규격</td></tr><tr><td>SF</td><td>목표 안전계수</td><td>프로젝트 설계 기준</td></tr></tbody></table><p class="source">참고 자료의 정수압·사각 평판·원통 막응력·호퍼 체적 공식은 모델 정의에 반영했습니다. 자료에 근거가 부족한 계수는 프리셋을 확정값으로 표현하지 않고 사용자 확인값으로 표시합니다.</p></section>
+</article></main><footer>TankStruct v0.2.0 · 상압 탱크 개념설계 스크리닝</footer></body></html>
+

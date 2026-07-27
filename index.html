@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="상압 액체 저장탱크의 정수압, 판 두께, 변형, 보강 격자를 비교하는 1차 구조검토 도구">
+  <title>TankStruct · 액체 탱크 1차 구조검토</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#calculator">계산 입력으로 건너뛰기</a>
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="TankStruct 홈">
+      <svg viewBox="0 0 36 36" aria-hidden="true">
+        <path d="M7 8h22v20H7zM7 14h22M13 8v20M23 8v20"/>
+        <path class="brand-wave" d="M8 20c3-2 5 2 8 0s5 2 8 0 4 1 5 0"/>
+      </svg>
+      <span><strong>TankStruct</strong><small>구조검토 스크리닝</small></span>
+    </a>
+    <nav class="header-actions" aria-label="도구 메뉴">
+      <button class="icon-button" id="helpButton" type="button" aria-label="도움말 열기" title="도움말">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.3 2.2c-.8.4-1.1.9-1.1 1.8M12 17h.01"/></svg>
+      </button>
+      <button class="icon-button" id="themeButton" type="button" aria-label="어두운 화면으로 전환" title="화면 테마">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8 8 0 0 1 8.6 4 8.2 8.2 0 1 0 20 15.4Z"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">ATMOSPHERIC TANK · PRELIMINARY CHECK</span>
+        <h1>탱크를 만들기 전,<br><span>두께와 보강안을 먼저 비교합니다.</span></h1>
+        <p>사각·원통·호퍼 탱크의 용량과 정수압을 계산하고, 판 두께와 보강 격자의 응력·변형을 같은 조건에서 비교하는 개념설계 도구입니다.</p>
+        <div class="scope-chips" aria-label="지원 범위">
+          <span>상압·개방형</span><span>정수압</span><span>PP-H·SUS</span><span>로컬 저장</span>
+        </div>
+      </div>
+      <aside class="safety-card">
+        <div class="safety-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3.5 7v5.5c0 4.6 3.5 7.4 8.5 8.5 5-1.1 8.5-3.9 8.5-8.5V7L12 3Z"/><path d="M12 8v5M12 16h.01"/></svg>
+        </div>
+        <div>
+          <strong>제작 승인용 계산서가 아닙니다</strong>
+          <p>실제 FEA가 아닌 1차 근사입니다. 밀폐·진공·지진·교반기·노즐·지지대·용접부·약품 열화는 별도 검토해야 합니다.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="workspace" id="calculator">
+      <form class="input-panel" id="tankForm" novalidate>
+        <div class="panel-heading">
+          <div>
+            <span class="step-label">01 · 설계 조건</span>
+            <h2>검토할 탱크</h2>
+          </div>
+          <div class="inline-actions">
+            <button class="text-button" id="importButton" type="button">JSON 불러오기</button>
+            <button class="text-button" id="exampleButton" type="button">예시</button>
+          </div>
+        </div>
+
+        <label class="field full">
+          <span>프로젝트명</span>
+          <input id="projectName" name="projectName" value="2톤 사각 탱크" autocomplete="off">
+        </label>
+
+        <fieldset class="shape-picker">
+          <legend>탱크 형상</legend>
+          <label><input type="radio" name="shape" value="rectangular" checked><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22v17H5zM5 9l5-4h17v21"/></svg>사각</span></label>
+          <label><input type="radio" name="shape" value="cylinder"><span><svg viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="16" cy="8" rx="10" ry="4"/><path d="M6 8v16c0 2 4.5 4 10 4s10-2 10-4V8"/></svg>원통</span></label>
+          <label><input type="radio" name="shape" value="hopper"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5h22v10l-8 10v3h-6v-3L5 15z"/></svg>호퍼</span></label>
+        </fieldset>
+
+        <div class="form-grid">
+          <label class="field shape-rect">
+            <span>내부 폭 <small>W</small></span>
+            <span class="input-unit"><input id="widthMm" name="widthMm" type="number" min="100" step="10" value="1400"><b>mm</b></span>
+          </label>
+          <label class="field shape-rect">
+            <span>내부 길이 <small>L</small></span>
+            <span class="input-unit"><input id="lengthMm" name="lengthMm" type="number" min="100" step="10" value="1200"><b>mm</b></span>
+          </label>
+          <label class="field shape-cylinder" hidden>
+            <span>내경 <small>D</small></span>
+            <span class="input-unit"><input id="diameterMm" name="diameterMm" type="number" min="100" step="10" value="1200"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>전체 높이 <small>H</small></span>
+            <span class="input-unit"><input id="heightMm" name="heightMm" type="number" min="100" step="10" value="1500"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>액체 높이</span>
+            <span class="input-unit"><input id="fillHeightMm" name="fillHeightMm" type="number" min="10" step="10" value="1400"><b>mm</b></span>
+          </label>
+        </div>
+
+        <div class="form-grid hopper-fields" hidden>
+          <label class="field">
+            <span>호퍼 높이</span>
+            <span class="input-unit"><input id="hopperHeightMm" name="hopperHeightMm" type="number" min="10" step="10" value="500"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>호퍼 하부 폭</span>
+            <span class="input-unit"><input id="bottomWidthMm" name="bottomWidthMm" type="number" min="10" step="10" value="300"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>호퍼 하부 길이</span>
+            <span class="input-unit"><input id="bottomLengthMm" name="bottomLengthMm" type="number" min="10" step="10" value="300"><b>mm</b></span>
+          </label>
+        </div>
+
+        <div class="section-rule"></div>
+        <div class="subheading">
+          <span class="step-label">02 · 액체와 재료</span>
+          <button class="info-trigger" type="button" data-tooltip="비중 1.0은 물과 같은 밀도 1,000 kg/m³입니다." aria-label="액체 비중 설명">i</button>
+        </div>
+        <div class="form-grid">
+          <label class="field">
+            <span>액체 비중 <small>SG</small></span>
+            <input id="specificGravity" name="specificGravity" type="number" min="0.1" max="3" step="0.01" value="0.83">
+          </label>
+          <label class="field">
+            <span>설계온도</span>
+            <span class="input-unit"><input id="temperatureC" name="temperatureC" type="number" min="-30" max="250" step="1" value="20"><b>°C</b></span>
+          </label>
+          <label class="field full">
+            <span>재료 프리셋</span>
+            <select id="materialId" name="materialId"></select>
+          </label>
+        </div>
+
+        <details class="advanced" id="materialDetails">
+          <summary>재료 물성·감소계수 직접 확인</summary>
+          <p id="materialNote" class="detail-note"></p>
+          <div class="form-grid">
+            <label class="field"><span>밀도</span><span class="input-unit"><input id="densityKgM3" type="number" min="100" step="1"><b>kg/m³</b></span></label>
+            <label class="field"><span>탄성계수 E</span><span class="input-unit"><input id="elasticModulusMpa" type="number" min="1" step="1"><b>MPa</b></span></label>
+            <label class="field"><span>기준 강도</span><span class="input-unit"><input id="referenceStrengthMpa" type="number" min="0.1" step="0.1"><b>MPa</b></span></label>
+            <label class="field"><span>장기하중 계수</span><input id="creepFactor" type="number" min="0.05" max="1" step="0.01"></label>
+            <label class="field"><span>이음 효율</span><input id="jointEfficiency" type="number" min="0.1" max="1" step="0.01"></label>
+            <label class="field"><span>온도 감소계수</span><input id="temperatureFactor" name="temperatureFactor" type="number" min="0.05" max="1" step="0.01" value="1"></label>
+          </div>
+          <p class="microcopy">상온 이외에서는 공급사 자료 또는 적용 규격의 온도별 설계값으로 바꾸세요. 자동 추정하지 않습니다.</p>
+        </details>
+
+        <div class="section-rule"></div>
+        <span class="step-label">03 · 현재 제작안</span>
+        <div class="form-grid">
+          <label class="field">
+            <span>판 두께</span>
+            <span class="input-unit"><input id="wallThicknessMm" name="wallThicknessMm" type="number" min="0.5" max="100" step="0.5" value="6"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>바닥판 두께 <small>중량 산출용</small></span>
+            <span class="input-unit"><input id="bottomThicknessMm" name="bottomThicknessMm" type="number" min="0.5" max="100" step="0.5" value="6"><b>mm</b></span>
+          </label>
+          <label class="field">
+            <span>부식·가공 여유</span>
+            <span class="input-unit"><input id="corrosionAllowanceMm" name="corrosionAllowanceMm" type="number" min="0" max="20" step="0.1" value="1.6"><b>mm</b></span>
+          </label>
+          <label class="field rect-only">
+            <span>수평 보강</span>
+            <span class="input-unit"><input id="horizontalRings" name="horizontalRings" type="number" min="0" max="8" step="1" value="2"><b>줄</b></span>
+          </label>
+          <label class="field rect-only">
+            <span>면당 수직 보강</span>
+            <span class="input-unit"><input id="verticalStiffeners" name="verticalStiffeners" type="number" min="0" max="8" step="1" value="1"><b>개</b></span>
+          </label>
+          <label class="field rect-only">
+            <span>수평 보강재 실제 Z <small>단면계수</small></span>
+            <span class="input-unit"><input id="horizontalSectionModulusCm3" name="horizontalSectionModulusCm3" type="number" min="0" max="100000" step="0.1" value="50"><b>cm³</b></span>
+          </label>
+          <label class="field rect-only">
+            <span>수직 보강재 실제 Z <small>단면계수</small></span>
+            <span class="input-unit"><input id="verticalSectionModulusCm3" name="verticalSectionModulusCm3" type="number" min="0" max="100000" step="0.1" value="50"><b>cm³</b></span>
+          </label>
+          <label class="field">
+            <span>목표 안전계수</span>
+            <input id="safetyFactor" name="safetyFactor" type="number" min="1.1" max="6" step="0.1" value="2">
+          </label>
+          <label class="field">
+            <span>허용 변형</span>
+            <span class="input-unit"><input id="deflectionLimitMm" name="deflectionLimitMm" type="number" min="0.1" max="100" step="0.5" value="5"><b>mm</b></span>
+          </label>
+          <label class="field full">
+            <span>바닥 지지 조건</span>
+            <select id="supportType" name="supportType">
+              <option value="full-base">평탄한 강성 기초에 전면 지지</option>
+              <option value="perimeter">외곽 프레임·테두리 지지</option>
+              <option value="legs">다리·국부 지지</option>
+            </select>
+          </label>
+        </div>
+        <label class="check-row rect-only"><input id="topFrame" name="topFrame" type="checkbox" checked><span><b>연속 상부 프레임이 있습니다</b><small>사각 패널 모델의 필수 경계조건</small></span></label>
+        <label class="check-row danger-check"><input id="closedTank" name="closedTank" type="checkbox"><span><b>밀폐 또는 가압 가능성이 있습니다</b><small>선택하면 이 계산으로 통과 판정을 내리지 않습니다</small></span></label>
+        <label class="check-row danger-check"><input id="externalLoads" name="externalLoads" type="checkbox"><span><b>풍하중·지진·운반·충격이 있습니다</b><small>선택하면 전문 구조검토로 전환합니다</small></span></label>
+        <label class="check-row danger-check"><input id="attachedEquipment" name="attachedEquipment" type="checkbox"><span><b>노즐·교반기·배관·플랫폼이 부착됩니다</b><small>국부하중과 접합부는 이 모델에서 계산하지 않습니다</small></span></label>
+
+        <div class="form-message" id="formMessage" role="alert" hidden></div>
+        <button class="primary-button" type="submit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7"/></svg>
+          현재 제작안 검토
+        </button>
+        <p class="autosave-note"><span></span> 입력값은 이 브라우저에 자동 저장됩니다.</p>
+      </form>
+
+      <section class="visual-panel" aria-labelledby="previewTitle">
+        <div class="panel-heading compact">
+          <div>
+            <span class="step-label">형상 미리보기</span>
+            <h2 id="previewTitle">하중과 보강 배치</h2>
+          </div>
+          <span class="model-badge" id="modelBadge">사각 패널</span>
+        </div>
+        <div class="tank-visual" id="tankVisual" aria-label="입력한 탱크의 개념도"></div>
+        <div class="visual-legend">
+          <span><i class="legend-liquid"></i>액체 높이</span>
+          <span><i class="legend-pressure"></i>수압 증가</span>
+          <span><i class="legend-stiffener"></i>보강재</span>
+        </div>
+        <div class="live-metrics" aria-live="polite">
+          <div><span>계산 용량</span><strong id="liveVolume">-</strong></div>
+          <div><span>액체 중량</span><strong id="liveLiquidMass">-</strong></div>
+          <div><span>바닥 수압</span><strong id="livePressure">-</strong></div>
+        </div>
+        <div class="model-note">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+          <p><strong>화면은 개념도입니다.</strong> 보강 위치와 수압 경향을 보여주며 실제 도면 축척이나 상세 형상을 대신하지 않습니다.</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="results" id="results" hidden aria-live="polite">
+      <div class="results-heading">
+        <div>
+          <span class="step-label">계산 결과</span>
+          <h2 id="resultTitle">1차 구조검토 결과</h2>
+          <p id="resultMeta"></p>
+        </div>
+        <div class="result-actions">
+          <button class="secondary-button report-button" id="pngButton" type="button">PNG 계산서</button>
+          <button class="secondary-button report-button" id="pdfButton" type="button">PDF 계산서</button>
+          <button class="secondary-button" id="csvButton" type="button">CSV 결과</button>
+          <button class="secondary-button" id="projectButton" type="button">JSON 백업</button>
+          <button class="secondary-button" id="printButton" type="button">인쇄</button>
+        </div>
+      </div>
+
+      <div class="status-banner" id="statusBanner"></div>
+      <div class="metric-grid" id="metricGrid"></div>
+      <article class="result-card utilization-card">
+        <div class="card-heading">
+          <div><span class="step-label">DESIGN CHECKS</span><h3>사용률 비교</h3></div>
+          <span class="card-hint">100% 이하가 입력 목표 이내</span>
+        </div>
+        <div class="utilization-chart" id="utilizationChart"></div>
+      </article>
+
+      <div class="result-grid">
+        <article class="result-card optimizer-card">
+          <div class="card-heading">
+            <div><span class="step-label">OPTIMIZATION</span><h3>조건을 만족한 비교안</h3></div>
+            <span class="card-hint">판재 중량은 보강재 제외</span>
+          </div>
+          <div id="optimizerResults"></div>
+        </article>
+
+        <article class="result-card formula-card">
+          <div class="card-heading">
+            <div><span class="step-label">CALCULATION TRACE</span><h3>재검증 계산식</h3></div>
+          </div>
+          <p class="card-intro">공식, 입력값 대입, 결과와 단위를 순서대로 표시합니다. PNG·PDF 계산서에도 같은 내용이 저장됩니다.</p>
+          <div class="table-wrap formula-wrap" id="calculationSteps"></div>
+        </article>
+
+        <article class="result-card">
+          <div class="card-heading">
+            <div><span class="step-label">BILL OF MATERIALS</span><h3>1차 부품 산출</h3></div>
+          </div>
+          <div class="table-wrap" id="bomTable"></div>
+        </article>
+
+        <article class="result-card">
+          <div class="card-heading">
+            <div><span class="step-label">REVIEW GATE</span><h3>다음 검토 항목</h3></div>
+            <span class="confidence-badge" id="confidenceBadge"></span>
+          </div>
+          <div id="warningList"></div>
+          <details class="assumptions">
+            <summary>계산 가정 전체 보기</summary>
+            <ul id="assumptionList"></ul>
+          </details>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>TankStruct</strong><span>v0.2.0 · 개념·견적 단계용</span></div>
+    <nav aria-label="문서 링크">
+      <a href="./docs/calculation-basis.html">계산 근거</a>
+      <a href="./docs/user-guide.html">사용 설명서</a>
+      <a href="./docs/limitations.html">한계와 검토 범위</a>
+    </nav>
+  </footer>
+
+  <dialog id="helpDialog">
+    <div class="dialog-heading">
+      <div><span class="step-label">QUICK GUIDE</span><h2>3분 사용법</h2></div>
+      <button class="icon-button" type="button" data-close-dialog aria-label="도움말 닫기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <ol class="guide-steps">
+      <li><div><b>형상과 내부 치수</b><span>실제 액체가 차는 높이까지 입력합니다.</span></div></li>
+      <li><div><b>재료 물성 확인</b><span>프리셋은 시작값입니다. 밀시트와 온도·약품 자료가 있으면 교체합니다.</span></div></li>
+      <li><div><b>현재 제작안 입력</b><span>판 두께, 보강 개수와 실제 단면계수 Z를 입력합니다.</span></div></li>
+      <li><div><b>계산식 재검증</b><span>결과의 공식·대입값·단위를 확인하고 PNG 또는 PDF 계산서로 보관합니다.</span></div></li>
+      <li><div><b>전문 검토 연결</b><span>실제 제작 전 적용 규격, 용접, 지지대, 노즐, 지진·운반 조건을 검토합니다.</span></div></li>
+    </ol>
+    <div class="dialog-warning"><strong>압력용기에는 사용하지 마세요.</strong><p>밀폐, 가압, 진공 가능성이 있으면 압력용기 코드에 따른 별도 설계가 필요합니다.</p></div>
+  </dialog>
+
+  <input id="fileInput" type="file" accept=".json,.tank.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./vendor/jspdf.umd.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
